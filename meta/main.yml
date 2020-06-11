@@ -1,0 +1,13 @@
+galaxy_info:
+  role_name: cygno
+  author: spiga@pg.infn.it
+  description: Setup environment for CYGNO experiment
+  company: INFN
+  license: Apache
+  min_ansible_version: 2.0
+  platforms:
+  - name: RedHat
+  - name: Debian
+  galaxy_tags:
+    - cygno_env
+

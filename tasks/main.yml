@@ -1,0 +1,4 @@
+---
+# tasks file for cygno environment setup
+
+ - include: cygno_install.yml

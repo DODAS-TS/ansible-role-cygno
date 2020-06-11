@@ -1,0 +1,5 @@
+cygno_user: cloudadm
+
+
+jupyter_port: 8888
+jupyter_token: cygnochangme

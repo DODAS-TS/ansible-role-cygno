@@ -1,0 +1,94 @@
+---
+#- name: Update all packages first
+#  yum:
+#    name: '*'
+#    state: latest
+#    update_cache: true
+#  become: true
+#  vars:
+#    ansible_python_interpreter: /usr/bin/python2.7  
+
+- name: install emacs nano  on RHEL based distros
+  #need to extend with version support
+  yum:
+    name: 
+      - vim
+      - emacs 
+      - nano
+      - git
+      - python36
+      - python36-root
+      - root
+      - xeyes
+      - xauth
+      - wget
+      - davix
+    state: present
+  vars:
+    ansible_python_interpreter: /usr/bin/python2.7
+  register: install_yum_repo 
+
+- name: add the magic cookie
+  shell: xauth add :0 . `mcookie`
+
+- name: add the magic cookie
+  shell: xauth add :0 . `mcookie`
+  become: yes
+  become_user: "{{ cygno_user }}"
+
+- name: create need dirs
+  shell: mkdir -p $HOME/.jupyter && mkdir -p $HOME/notebooks
+  become: yes
+  become_user: "{{ cygno_user }}"
+
+- name: Configure token
+  template:
+    src: jupyter_notebook_token_config.py
+    dest: $HOME/.jupyter/jupyter_notebook_config.py
+    owner: "{{ cygno_user }}"
+  become: yes
+  become_user: "{{ cygno_user }}"
+
+- name: Launch jupyter notebook
+  shell: 
+    cd $HOME/notebooks && jupyter notebook --no-browser --ip 0.0.0.0 --port "{{ jupyter_port | int }}" > $HOME/log_jupyter.txt &
+  become: yes
+  become_user: "{{ cygno_user }}"
+
+- name: update alternatives install
+  command:
+     update-alternatives --install /usr/bin/python python /usr/bin/python3.6 1
+  when: install_yum_repo
+  register: update_alternatives_install
+
+- name: update alternatives set python3.6
+  command: 
+     update-alternatives  --set python /usr/bin/python3.6
+  when: update_alternatives_install
+
+- name: finally patch yum 
+  lineinfile:
+    dest: /bin/yum
+    regexp: '^\s*#!/usr/bin/python*$'
+    line: '#!/usr/bin/python2.7'
+    backrefs: yes
+  become: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python2.7 
+  
+- name: finally patch yum (urlgrabber)
+  lineinfile:
+    dest: /usr/libexec/urlgrabber-ext-down
+    regexp: '^\s*#! /usr/bin/python*$'
+    line: '#! /usr/bin/python2.7'
+    backrefs: yes
+  become: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python2.7 
+
+- name: Wait for port Jupyter to become open on the host, don't start checking for 10 seconds
+  wait_for:
+    port: "{{ jupyter_port | int }}"
+    delay: 10
+  vars:
+    ansible_python_interpreter: /usr/bin/python2.7 
