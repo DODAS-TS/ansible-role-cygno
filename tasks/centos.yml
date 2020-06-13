@@ -55,21 +55,30 @@
   become: yes
   become_user: "{{ cygno_user }}"
 
-- name: update alternatives install
-  command:
-     update-alternatives --install /usr/bin/python python /usr/bin/python3.6 1
-  become: yes
-  become_user: root
+- name: correct java version selected
+  alternatives:
+    link: /usr/bin/python
+    name: python
+    path: /usr/bin/python3.6
+  become: true
   when: install_yum_repo
   register: update_alternatives_install
 
-- name: update alternatives set python3.6
-  command: 
-     update-alternatives  --set python /usr/bin/python3.6
-  become: yes
-  become_user: root
-  when: update_alternatives_install
+#- name: update alternatives install
+#  command:
+#     update-alternatives --install /usr/bin/python python /usr/bin/python3.6 1
+#  become: yes
+#  become_user: root
+#  when: install_yum_repo
+#  register: update_alternatives_install
 
+#- name: update alternatives set python3.6
+#  command: 
+#     update-alternatives  --set python /usr/bin/python3.6
+#  become: yes
+#  become_user: root
+#  when: update_alternatives_install
+#
 - name: finally patch yum 
   lineinfile:
     dest: /bin/yum
