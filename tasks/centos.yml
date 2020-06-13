@@ -55,7 +55,7 @@
   become: yes
   become_user: "{{ cygno_user }}"
 
-- name: correct java version selected
+- name: correct python version selected
   alternatives:
     link: /usr/bin/python
     name: python
