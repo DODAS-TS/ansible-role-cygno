@@ -58,7 +58,7 @@
 - name: update alternatives install
   command:
      update-alternatives --install /usr/bin/python python /usr/bin/python3.6 1
-  become: true
+  become: yes
   become_user: root
   when: install_yum_repo
   register: update_alternatives_install
@@ -66,7 +66,7 @@
 - name: update alternatives set python3.6
   command: 
      update-alternatives  --set python /usr/bin/python3.6
-  become: true
+  become: yes
   become_user: root
   when: update_alternatives_install
 
