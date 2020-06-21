@@ -1,4 +1,4 @@
----
+--
 #- name: Update all packages first
 #  yum:
 #    name: '*'
@@ -35,6 +35,14 @@
   shell: xauth add :0 . `mcookie`
   become: yes
   become_user: "{{ cygno_user }}"
+
+- name: "create rootrc file"
+  copy:
+    content: "Davix.GSI.CACheck: no"
+    dest: "/home/{{ cygno_user }}/.rootrc"
+    owner: "{{ cygno_user }}"
+    group: "{{ cygno_user }}"
+
 
 - name: create need dirs
   shell: mkdir -p $HOME/.jupyter && mkdir -p $HOME/notebooks
