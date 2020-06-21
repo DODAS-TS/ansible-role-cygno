@@ -36,7 +36,7 @@
   become: yes
   become_user: "{{ cygno_user }}"
 
-- name: "create rootrc file"
+- name: create rootrc file
   copy:
     content: "Davix.GSI.CACheck: no"
     dest: "/home/{{ cygno_user }}/.rootrc"
